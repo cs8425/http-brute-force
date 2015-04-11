@@ -14,20 +14,21 @@ var username = 'admin';
 var start = '';
 var test_length = 12;
 
+var update = function(base){
+	//console.log(i, base.length, base);
+	var out = '';
+	var len = base.length;
+	var index = chars.lastIndexOf(base.substr(-1));
+	if(chars[index+1]){
+		out = base.substr(0, len-1) + chars[index+1];
+	}else{
+		out = update(base.substr(0, len-1)) + chars[0];
+	}
+	return out;
+}
+
 var brute_force = function(base){
 	if(base.length <= test_length){
-		var update = function(base){
-			//console.log(i, base.length, base);
-			var out = '';
-			var len = base.length;
-			var index = chars.lastIndexOf(base.substr(-1));
-			if(chars[index+1]){
-				out = base.substr(0, len-1) + chars[index+1];
-			}else{
-				out = update(base.substr(0, len-1)) + chars[0];
-			}
-			return out;
-		}
 
 		console.log(base.length, base);
 		run(base, function(){
